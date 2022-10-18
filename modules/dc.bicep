@@ -1,8 +1,8 @@
 param location string
 param vnetName string
 param vmName string
-param vnetPrefix string = '172.17.0.0/16'
-param privateIPAddress string = '172.17.0.10'
+param subnetName string
+param privateIPAddress string
 param vmSize string = 'Standard_D2s_v3'
 param computerName string = 'DC1'
 param domainName string
@@ -11,20 +11,15 @@ param adminUsername string
 param adminPassword string
 param tags object = {}
 
-var modulesUrl = 'https://github.com/levi106/dsc/releases/download/v1.5/CreateADPDC.zip'
+var modulesUrl = 'https://github.com/levi106/dsc/releases/download/v1.7/CreateADPDC.zip'
 
-module vnet 'vnet.bicep' = {
+resource vnet 'Microsoft.Network/virtualNetworks@2019-12-01' existing = {
   name: vnetName
-  scope: resourceGroup()
-  params: {
-    name: vnetName
-    location: location
-    vnetPrefix: vnetPrefix
-  }
 }
 
-resource subnet 'Microsoft.Network/virtualNetworks/subnets@2019-12-01' = {
-  name: '${vnet.name}/default'
+resource subnet 'Microsoft.Network/virtualNetworks/subnets@2019-12-01' existing = {
+  name: subnetName
+  parent: vnet
 }
 
 resource nsg 'Microsoft.Network/networkSecurityGroups@2019-12-01' = {
@@ -136,7 +131,7 @@ resource dsc 'Microsoft.Compute/virtualMachines/extensions@2021-11-01' = {
     publisher: 'Microsoft.Powershell'
     type: 'DSC'
     typeHandlerVersion: '2.19'
-    autoUpgradeMinorVersion: true
+    autoUpgradeMinorVersion: false
     settings: {
       ModulesUrl: modulesUrl
       ConfigurationFunction: 'CreateADPDC.ps1\\CreateADPDC'
@@ -157,12 +152,16 @@ resource dsc 'Microsoft.Compute/virtualMachines/extensions@2021-11-01' = {
 }
 
 module vnet_update './vnet.bicep' = {
-  name: vnetName
+  name: 'update-vnet'
   scope: resourceGroup()
+  dependsOn: [dsc]
   params: {
-    name: vnetName
+    name: vnet.name
     location: location
-    vnetPrefix: vnetPrefix
+    addressPrefixes: vnet.properties.addressSpace.addressPrefixes
+    subnets: vnet.properties.subnets
     dnsServers: [privateIPAddress]
   }
 }
+
+output domainName string = domainName

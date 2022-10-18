@@ -1,6 +1,7 @@
 param name string
 param location string
-param vnetPrefix string
+param addressPrefixes array
+param subnets array
 param dnsServers array = []
 param tags object = {}
 
@@ -10,10 +11,9 @@ resource vnet 'Microsoft.Network/virtualNetworks@2019-12-01' = {
   tags: tags
   properties: {
     addressSpace: {
-      addressPrefixes: [
-        vnetPrefix
-      ]
+      addressPrefixes: addressPrefixes
     }
+    subnets: subnets
     dhcpOptions: {
       dnsServers: dnsServers
     }
