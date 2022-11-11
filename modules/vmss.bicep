@@ -20,8 +20,8 @@ param adminUsername string
 param adminPassword string
 param tags object = {}
 
-var prepModuleUrl = 'https://github.com/levi106/dsc/releases/download/v1.17/PrepareCluster.zip'
-var configModuleUrl = 'https://github.com/levi106/dsc/releases/download/v1.17/ConfigCluster.zip'
+var prepModuleUrl = 'https://github.com/levi106/dsc/releases/download/v1.18/PrepareCluster.zip'
+var configModuleUrl = 'https://github.com/levi106/dsc/releases/download/v1.18/ConfigCluster.zip'
 
 resource vnet 'Microsoft.Network/virtualNetworks@2019-12-01' existing = {
   name: vnetName

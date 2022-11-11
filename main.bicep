@@ -1,4 +1,4 @@
-param prefix string = 'ultrassd-cluster'
+param prefix string = 'ultradisk-cluster'
 param location string = resourceGroup().location
 param adminUsername string = 'azureuser'
 @secure()
