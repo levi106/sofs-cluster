@@ -20,8 +20,8 @@ param adminUsername string
 param adminPassword string
 param tags object = {}
 
-var prepModuleUrl = 'https://github.com/levi106/dsc/releases/download/v1.14/PrepareSOFS.zip'
-var configModuleUrl = 'https://github.com/levi106/dsc/releases/download/v1.14/ConfigSOFS.zip'
+var prepModuleUrl = 'https://github.com/levi106/dsc/releases/download/v1.17/PrepareCluster.zip'
+var configModuleUrl = 'https://github.com/levi106/dsc/releases/download/v1.17/ConfigCluster.zip'
 
 resource vnet 'Microsoft.Network/virtualNetworks@2019-12-01' existing = {
   name: vnetName
@@ -280,11 +280,8 @@ resource vmconfig 'Microsoft.Compute/virtualMachines/extensions@2019-07-01' = {
         clusterName: clusterName
         namePrefix: vmNamePrefix
         vmCount: vmCount
-        dataDiskSizeGB: dataDiskSieGB
         witnessType: 'Cloud'
         witnessStorageName: witnessStorage.name
-        sofsName: sofsName
-        shareName: shareName
       }
     }
     protectedSettings: {
